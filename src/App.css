@@ -2,6 +2,7 @@
 .app-container {
   display: flex;
   height: 100vh;
+ 
   background-color: #f5f7fb;
 }
 
@@ -9,11 +10,12 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  
 }
 
 /* Sidebar.css */
 .sidebar {
-  width: 260px;
+  width: 20rem;
   background-color: #fff;
   height: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -88,6 +90,9 @@
 
 /* ModelRegistry.css */
 .model-registry-container {
+  width: 100%;
+}
+.model-validation-container{
   width: 100%;
 }
 

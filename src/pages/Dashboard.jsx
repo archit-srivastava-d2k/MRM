@@ -132,12 +132,7 @@ const Dashboard = () => {
         >
           RBI Regulatory View
         </button>
-        <button 
-          className={activeTab === 'detailed' ? 'active' : ''} 
-          onClick={() => setActiveTab('detailed')}
-        >
-          Detailed Analysis
-        </button>
+       
       </div>
       
       {activeTab === 'cro' && (
