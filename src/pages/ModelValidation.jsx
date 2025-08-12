@@ -73,7 +73,7 @@ const mockModels = [
       { action: 'Submitted', user: 'John Doe', date: '2024-01-15T10:30:00Z', comment: 'Initial submission' },
       { action: 'Under Review', user: 'Sarah Wilson', date: '2024-01-16T09:15:00Z', comment: 'Started validation process' }
     ],
-    testDataset: null // Added to store testing dataset info
+    testDataset: null
   },
   {
     id: 'mdl-002',
@@ -154,6 +154,13 @@ const ModelValidation = () => {
   const [showSubmissionModal, setShowSubmissionModal] = useState(false);
   const [showValidationDetails, setShowValidationDetails] = useState(false);
   const [userRole, setUserRole] = useState('Model Validator');
+
+  // Automatically select the first model when switching to Validation tab
+  useEffect(() => {
+    if (activeTab === 'validation' && !selectedModel && models.length > 0) {
+      setSelectedModel(models[0]);
+    }
+  }, [activeTab, models, selectedModel]);
 
   const getStatusBadge = (status) => {
     const statusStyles = {
@@ -473,10 +480,12 @@ const ModelValidation = () => {
               <div key={index} className="flex items-start space-x-3 pb-3 border-b border-gray-100 last:border-b-0">
                 <div className={`p-1 rounded-full ${
                   entry.action === 'Approved' ? 'bg-green-100' :
-                  entry.action === 'Rejected' ? 'bg-red-100' : 'bg-blue-100'
+                  entry.action === 'Rejected' ? 'bg-red-100' : 
+                  entry.action === 'Test Dataset Uploaded' ? 'bg-purple-100' : 'bg-blue-100'
                 }`}>
                   {entry.action === 'Approved' ? <CheckCircle size={12} className="text-green-600" /> :
                    entry.action === 'Rejected' ? <XCircle size={12} className="text-red-600" /> :
+                   entry.action === 'Test Dataset Uploaded' ? <Upload size={12} className="text-purple-600" /> :
                    <Clock size={12} className="text-blue-600" />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -517,7 +526,14 @@ const ModelValidation = () => {
         validationScore: null,
         metrics: null,
         riskLevel: 'Unknown',
-        testDataset: null
+        testDataset: null,
+        biasChecks: { fairness: 0, demographic: 0, equalized: 0 },
+        explainability: 0,
+        driftScore: 0,
+        compliance: { gdpr: 'Pending', modelCard: 'Incomplete', dataLineage: 'Missing' },
+        approvalHistory: [
+          { action: 'Submitted', user: 'Current User', date: new Date().toISOString(), comment: 'Initial submission' }
+        ]
       };
       
       setModels(prev => [newModel, ...prev]);
@@ -647,6 +663,67 @@ const ModelValidation = () => {
     );
   };
 
+  const ValidationView = () => {
+    return (
+      <div className="space-y-8">
+        {!selectedModel ? (
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Select a Model for Validation</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {models.map((model) => (
+                <div
+                  key={model.id}
+                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setSelectedModel(model)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-900">{model.name}</h3>
+                      <p className="text-xs text-gray-600">Version {model.version}</p>
+                      <p className="text-xs text-gray-500">Submitted by {model.owner}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {getStatusBadge(model.status)}
+                      {getRiskBadge(model.riskLevel)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">{selectedModel.name}</h2>
+                  <p className="text-sm text-gray-600">Version {selectedModel.version} • Submitted by {selectedModel.owner}</p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  {getStatusBadge(selectedModel.status)}
+                  {getRiskBadge(selectedModel.riskLevel)}
+                  <button
+                    onClick={() => setSelectedModel(null)}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    Change Model
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <ValidationMetrics model={selectedModel} />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <ComplianceChecklist model={selectedModel} />
+              <ApprovalWorkflow model={selectedModel} />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const DashboardView = () => {
     const totalModels = models.length;
     const approvedModels = models.filter(m => m.status === 'Approved').length;
@@ -657,14 +734,12 @@ const ModelValidation = () => {
       const file = event.target.files[0];
       if (!file) return;
 
-      // Basic file validation
       const validTypes = ['text/csv', 'application/json', 'application/x-parquet'];
       if (!validTypes.includes(file.type)) {
         alert('Please upload a valid dataset file (CSV, JSON, or Parquet).');
         return;
       }
 
-      // Mock dataset processing
       const updatedModels = models.map(m => {
         if (m.id === modelId) {
           return {
@@ -846,7 +921,7 @@ const ModelValidation = () => {
                           <button
                             onClick={() => {
                               setSelectedModel(model);
-                              setShowValidationDetails(true);
+                              setActiveTab('validation'); // Switch to validation tab
                             }}
                             className="text-blue-600 hover:text-blue-900"
                           >
@@ -927,30 +1002,8 @@ const ModelValidation = () => {
       <div className="p-6">
         {activeTab === 'dashboard' && <DashboardView />}
         
-        {activeTab === 'validation' && selectedModel && (
-          <div className="space-y-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">{selectedModel.name}</h2>
-                  <p className="text-sm text-gray-600">Version {selectedModel.version} • Submitted by {selectedModel.owner}</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  {getStatusBadge(selectedModel.status)}
-                  {getRiskBadge(selectedModel.riskLevel)}
-                </div>
-              </div>
-            </div>
-            
-            <ValidationMetrics model={selectedModel} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <ComplianceChecklist model={selectedModel} />
-              <ApprovalWorkflow model={selectedModel} />
-            </div>
-          </div>
-        )}
-
+        {activeTab === 'validation' && <ValidationView />}
+        
         {activeTab === 'audit' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200">
