@@ -82,26 +82,27 @@ const ModelBuilder = () => {
     }
   };
 
+  
   return (
-    <div className="  bg-gray-50">
-      {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-4">
-        <div className="flex items-center space-x-4">
-          <ArrowLeft className="w-6 h-6 cursor-pointer" />
-          <Home className="w-6 h-6" />
-          <span className="text-lg font-medium">Model Builder</span>
-          <span className="text-gray-300">New Model</span>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Steps Sidebar */}
+      <StepsSidebar steps={getSteps()} currentStep={currentStep} />
+
+      {/* Main Content */}
+      <div className="flex-1">
+        {/* Header */}
+        <div className="bg-blue-900 text-white px-6 py-4">
+          <div className="flex items-center space-x-4">
+            <ArrowLeft className="w-6 h-6 cursor-pointer" />
+            <Home className="w-6 h-6" />
+            <span className="text-lg font-medium">Model Builder</span>
+            <span className="text-gray-300">New Model</span>
+          </div>
         </div>
-      </div>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <StepsSidebar steps={getSteps()} currentStep={currentStep} />
-
-        {/* Main Content */}
-        <div className=" p-8">
+        <div className="p-8">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-700 overflow-hidden">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
               {error}
             </div>
           )}
