@@ -91,10 +91,10 @@ const Sidebar = () => {
         </NavLink>
       </div>
       
-      <div className="sidebar-footer">
+      {/* <div className="sidebar-footer">
         <p>© 2025 MRM System</p>
         <p>v1.0.0</p>
-      </div>
+      </div> */}
     </div>
   );
 };

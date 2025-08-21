@@ -155,7 +155,7 @@ const SelectTrainingData = ({ filterConditions, setFilterConditions, totalRecord
             <div className="px-6 py-4">
               <div className="space-y-4">
                 {filterConditions.map((condition, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-4 items-start">
+                  <div key={index} className="grid grid-cols-12 gap-4 items-start ">
                     <div className="col-span-4">
                       <div className="relative">
                         <select

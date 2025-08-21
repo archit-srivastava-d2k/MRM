@@ -84,7 +84,7 @@ const ModelBuilder = () => {
 
   
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className=" bg-gray-50 flex h-[90vh]">
       {/* Steps Sidebar */}
       <StepsSidebar steps={getSteps()} currentStep={currentStep} />
 
