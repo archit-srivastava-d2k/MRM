@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   Database, 
@@ -6,10 +6,17 @@ import {
   BarChart2, 
   Settings,
   Users,
-  FileText
+  FileText,
+  ChevronDown
 } from 'lucide-react';
 
 const Sidebar = () => {
+  const [isModelBuilderOpen, setIsModelBuilderOpen] = useState(false);
+
+  const toggleModelBuilder = () => {
+    setIsModelBuilderOpen(!isModelBuilderOpen);
+  };
+
   return (
     <div className="sidebar">
       <div className="logo-container">
@@ -19,6 +26,37 @@ const Sidebar = () => {
       
       <div className="nav-links">
         <h3>MAIN</h3>
+        <div className="nav-item-container">
+          <div 
+            className="nav-item flex justify-between items-center cursor-pointer"
+            onClick={toggleModelBuilder}
+          >
+            <div className="flex items-center">
+              <Database size={20} />
+              <span>Model Builder</span>
+            </div>
+            <ChevronDown 
+              size={16} 
+              className={`transform transition-transform ${isModelBuilderOpen ? 'rotate-180' : ''}`}
+            />
+          </div>
+          {isModelBuilderOpen && (
+            <div className="ml-6 mt-1">
+              <NavLink 
+                to="/modelbuilder/new-model" 
+                className={({ isActive }) => isActive ? "nav-item active pl-4" : "nav-item pl-4"}
+              >
+                <span>New Model</span>
+              </NavLink>
+              <NavLink 
+                to="/modelbuilder/import" 
+                className={({ isActive }) => isActive ? "nav-item active pl-4" : "nav-item pl-4"}
+              >
+                <span>Import Model</span>
+              </NavLink>
+            </div>
+          )}
+        </div>
         <NavLink to="/registry" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
           <Database size={20} />
           <span>Model Registry</span>

@@ -5,6 +5,7 @@ import ModelRegistry from './pages/ModelRegistry';
 import ModelValidation from './pages/ModelValidation';
 import Dashboard from './pages/Dashboard';
 import './App.css';
+import ModelBuilder from './pages/ModelBuilder';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Sidebar />
         <div className="content">
           <Routes>
+            <Route path='/modelbuilder/new-model' element={<ModelBuilder />} /> 
             <Route path="/registry" element={<ModelRegistry />} />
             <Route path="/validation" element={<ModelValidation />} />
             <Route path="/dashboard" element={<Dashboard />} />

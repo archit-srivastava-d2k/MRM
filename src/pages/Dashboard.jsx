@@ -45,7 +45,7 @@ const mockModels = [
   {
     id: 'mdl-001',
     name: 'Credit Risk Scoring Model',
-    version: '2.3.1',
+    version: 'auto',
     status: 'Active',
     lastTrained: '2024-01-15T10:30:00Z',
     lastDeployed: '2024-01-16T14:20:00Z',
@@ -105,7 +105,7 @@ const mockModels = [
   {
     id: 'mdl-002',
     name: 'Fraud Detection Engine',
-    version: '1.8.4',
+    version: 'manual',
     status: 'Active',
     lastTrained: '2024-01-12T08:15:00Z',
     lastDeployed: '2024-01-12T16:45:00Z',
@@ -160,7 +160,179 @@ const mockModels = [
     alerts: [
       { type: 'success', message: 'Model performance improved by 0.2%', timestamp: '2024-01-12T16:45:00Z' }
     ]
-  }
+  },
+  {
+  id: 'mdl-003',
+  name: 'Customer Churn Prediction',
+  version: 'auto',
+  status: 'Active',
+  lastTrained: '2024-02-05T09:00:00Z',
+  lastDeployed: '2024-02-06T13:15:00Z',
+  environment: 'Production',
+  owner: 'Customer Insights Team',
+  description: 'Predicts customer churn probability using gradient boosting models',
+  framework: 'LightGBM',
+  trainingData: '1.8M customer records',
+  features: 64,
+  currentMetrics: {
+    accuracy: 0.912,
+    precision: 0.894,
+    recall: 0.875,
+    f1Score: 0.884,
+    aucRoc: 0.945,
+    giniCoefficient: 0.795,
+    ks: 0.702
+  },
+  performanceHistory: [
+    { date: '2024-02-01', accuracy: 0.911, precision: 0.893, recall: 0.874, f1Score: 0.883, predictions: 9800 },
+    { date: '2024-02-02', accuracy: 0.912, precision: 0.894, recall: 0.875, f1Score: 0.884, predictions: 10200 },
+    { date: '2024-02-03', accuracy: 0.913, precision: 0.895, recall: 0.876, f1Score: 0.885, predictions: 9600 }
+  ],
+  confusionMatrix: {
+    truePositive: 6784,
+    falsePositive: 542,
+    trueNegative: 13456,
+    falseNegative: 982
+  },
+  featureImportance: [
+    { feature: 'Monthly Charges', importance: 0.254 },
+    { feature: 'Contract Type', importance: 0.223 },
+    { feature: 'Tenure', importance: 0.192 },
+    { feature: 'Support Calls', importance: 0.167 },
+    { feature: 'Payment Method', importance: 0.097 },
+    { feature: 'Internet Service Type', importance: 0.067 }
+  ],
+  driftAnalysis: {
+    dataDrift: 0.042,
+    conceptDrift: 0.019,
+    predictionDrift: 0.031,
+    status: 'Low Risk'
+  },
+  businessMetrics: {
+    totalPredictions: 760000,
+    avgResponseTime: 38,
+    errorRate: 0.003,
+    throughput: 670
+  },
+  alerts: [
+    { type: 'info', message: 'Model retrained with updated customer records', timestamp: '2024-02-05T09:00:00Z' }
+  ]
+},
+{
+  id: 'mdl-004',
+  name: 'Loan Approval Predictor',
+  version: 'manual',
+  status: 'Inactive',
+  lastTrained: '2023-12-20T07:45:00Z',
+  lastDeployed: '2023-12-21T11:10:00Z',
+  environment: 'Staging',
+  owner: 'Lending Operations',
+  description: 'Predicts loan approval likelihood using logistic regression',
+  framework: 'Scikit-learn',
+  trainingData: '900K loan applications',
+  features: 38,
+  currentMetrics: {
+    accuracy: 0.875,
+    precision: 0.851,
+    recall: 0.826,
+    f1Score: 0.838,
+    aucRoc: 0.901,
+    giniCoefficient: 0.758,
+    ks: 0.684
+  },
+  performanceHistory: [
+    { date: '2023-12-15', accuracy: 0.874, precision: 0.850, recall: 0.825, f1Score: 0.837, predictions: 5200 },
+    { date: '2023-12-16', accuracy: 0.875, precision: 0.851, recall: 0.826, f1Score: 0.838, predictions: 5400 },
+    { date: '2023-12-17', accuracy: 0.876, precision: 0.852, recall: 0.827, f1Score: 0.839, predictions: 5100 }
+  ],
+  confusionMatrix: {
+    truePositive: 3245,
+    falsePositive: 412,
+    trueNegative: 5123,
+    falseNegative: 678
+  },
+  featureImportance: [
+    { feature: 'Annual Income', importance: 0.288 },
+    { feature: 'Credit History', importance: 0.255 },
+    { feature: 'Loan Amount', importance: 0.192 },
+    { feature: 'Employment Length', importance: 0.142 },
+    { feature: 'Debt-to-Income Ratio', importance: 0.075 },
+    { feature: 'Collateral Value', importance: 0.048 }
+  ],
+  driftAnalysis: {
+    dataDrift: 0.051,
+    conceptDrift: 0.029,
+    predictionDrift: 0.037,
+    status: 'Moderate Risk'
+  },
+  businessMetrics: {
+    totalPredictions: 300000,
+    avgResponseTime: 50,
+    errorRate: 0.004,
+    throughput: 480
+  },
+  alerts: [
+    { type: 'warning', message: 'Slight increase in false positives detected', timestamp: '2023-12-20T08:10:00Z' }
+  ]
+},
+{
+  id: 'mdl-005',
+  name: 'Sentiment Analysis Engine',
+  version: 'auto',
+  status: 'Active',
+  lastTrained: '2024-03-10T06:50:00Z',
+  lastDeployed: '2024-03-10T12:20:00Z',
+  environment: 'Production',
+  owner: 'Marketing Analytics',
+  description: 'Classifies customer reviews as positive, neutral, or negative using BERT',
+  framework: 'PyTorch',
+  trainingData: '12M text reviews',
+  features: 512,
+  currentMetrics: {
+    accuracy: 0.958,
+    precision: 0.949,
+    recall: 0.946,
+    f1Score: 0.948,
+    aucRoc: 0.984,
+    giniCoefficient: 0.821,
+    ks: 0.736
+  },
+  performanceHistory: [
+    { date: '2024-03-08', accuracy: 0.957, precision: 0.948, recall: 0.945, f1Score: 0.947, predictions: 215000 },
+    { date: '2024-03-09', accuracy: 0.958, precision: 0.949, recall: 0.946, f1Score: 0.948, predictions: 218500 },
+    { date: '2024-03-10', accuracy: 0.959, precision: 0.950, recall: 0.947, f1Score: 0.949, predictions: 220100 }
+  ],
+  confusionMatrix: {
+    truePositive: 184567,
+    falsePositive: 5243,
+    trueNegative: 292876,
+    falseNegative: 7894
+  },
+  featureImportance: [
+    { feature: 'Word Embeddings', importance: 0.412 },
+    { feature: 'Sentiment Lexicon', importance: 0.231 },
+    { feature: 'Punctuation Usage', importance: 0.154 },
+    { feature: 'Negation Handling', importance: 0.108 },
+    { feature: 'Stopword Removal', importance: 0.061 },
+    { feature: 'POS Tags', importance: 0.034 }
+  ],
+  driftAnalysis: {
+    dataDrift: 0.018,
+    conceptDrift: 0.012,
+    predictionDrift: 0.014,
+    status: 'Very Low Risk'
+  },
+  businessMetrics: {
+    totalPredictions: 15400000,
+    avgResponseTime: 19,
+    errorRate: 0.001,
+    throughput: 1800
+  },
+  alerts: [
+    { type: 'success', message: 'Model retrained with multilingual dataset', timestamp: '2024-03-10T06:50:00Z' }
+  ]
+}
+
 ];
 
 const Dashboard = () => {
