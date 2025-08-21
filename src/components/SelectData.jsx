@@ -19,7 +19,7 @@ const SelectData = ({ selectedDataSources, setSelectedDataSources }) => {
   };
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl  p-8 bg-white rounded-lg shadow-lg  scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 [scrollbar-thumb-rounded-full] overflow-y-hidden">
       <h1 className="text-2xl font-semibold text-gray-800 mb-8">
         Select Data
       </h1>

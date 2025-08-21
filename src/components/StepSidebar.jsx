@@ -2,7 +2,7 @@ import React from 'react';
 
 const StepsSidebar = ({ steps, currentStep }) => {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <div className="w-64 bg-white border-r border-gray-200 ">
       <div className="p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Steps</h3>
         <div className="space-y-3">
