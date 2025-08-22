@@ -4,6 +4,8 @@ import StepsSidebar from '../components/StepSidebar';
 import ChooseType from '../components/ChooseType';
 import SelectData from '../components/SelectData';
 import SelectTrainingData from '../components/SelectTrainingData';
+import SetGoal from '../components/SetGoal';
+import PrepareData from '../components/PrepareData';
 
 const ModelBuilder = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -15,6 +17,16 @@ const ModelBuilder = () => {
   const [totalRecords] = useState(598);
   const [filteredRecords, setFilteredRecords] = useState(541);
   const [error, setError] = useState('');
+  const [goalSettings, setGoalSettings] = useState(null);
+  const [prepareDataSettings, setPrepareDataSettings] = useState({
+    selectedVariables: ['Escalated', 'Duration', 'Number of Comments'],
+    autopilotEnabled: true,
+    replaceWith: 'Average',
+    groupBy: 'Product',
+    buckets: 30,
+    alerts: {},
+    settings: {}
+  });
 
   const getSteps = () => [
     { id: 1, title: 'Choose Type', completed: currentStep > 1, active: currentStep === 1 },
@@ -35,6 +47,14 @@ const ModelBuilder = () => {
       setError('Please select at least one data source to continue.');
       return;
     }
+    if (currentStep === 4 && !goalSettings) {
+      setError('Please set a goal to continue.');
+      return;
+    }
+    if (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0) {
+      setError('Please select at least one variable to continue.');
+      return;
+    }
     setError('');
     if (currentStep < 7) {
       setCurrentStep(currentStep + 1);
@@ -52,6 +72,16 @@ const ModelBuilder = () => {
     setSelectedModel(null);
     setSelectedDataSources([]);
     setFilterConditions([{ field: 'Lead Source', operator: 'Contains', value: [] }]);
+    setGoalSettings(null);
+    setPrepareDataSettings({
+      selectedVariables: ['Escalated', 'Duration', 'Number of Comments'],
+      autopilotEnabled: true,
+      replaceWith: 'Average',
+      groupBy: 'Product',
+      buckets: 30,
+      alerts: {},
+      settings: {}
+    });
     setCurrentStep(1);
     setError('');
   };
@@ -77,75 +107,144 @@ const ModelBuilder = () => {
             setFilteredRecords={setFilteredRecords}
           />
         );
+      case 4:
+        return (
+          <SetGoal
+            onBack={handleBack}
+            onNext={(settings) => {
+              setGoalSettings(settings);
+              handleNext();
+            }}
+          />
+        );
+      case 5:
+        return (
+          <PrepareData
+            onBack={handleBack}
+            onNext={(settings) => {
+              setPrepareDataSettings((prev) => ({ ...prev, ...settings }));
+              handleNext();
+            }}
+            selectedVariables={prepareDataSettings.selectedVariables}
+            setSelectedVariables={(vars) =>
+              setPrepareDataSettings((prev) => ({ ...prev, selectedVariables: vars }))
+            }
+            searchTerm={prepareDataSettings.searchTerm || ''}
+            setSearchTerm={(term) =>
+              setPrepareDataSettings((prev) => ({ ...prev, searchTerm: term }))
+            }
+            autopilotEnabled={prepareDataSettings.autopilotEnabled}
+            setAutopilotEnabled={(enabled) =>
+              setPrepareDataSettings((prev) => ({ ...prev, autopilotEnabled: enabled }))
+            }
+            replaceWith={prepareDataSettings.replaceWith}
+            setReplaceWith={(value) =>
+              setPrepareDataSettings((prev) => ({ ...prev, replaceWith: value }))
+            }
+            groupBy={prepareDataSettings.groupBy}
+            setGroupBy={(value) =>
+              setPrepareDataSettings((prev) => ({ ...prev, groupBy: value }))
+            }
+            buckets={prepareDataSettings.buckets}
+            setBuckets={(value) =>
+              setPrepareDataSettings((prev) => ({ ...prev, buckets: value }))
+            }
+            alerts={prepareDataSettings.alerts}
+            setAlerts={(alerts) =>
+              setPrepareDataSettings((prev) => ({ ...prev, alerts }))
+            }
+            settings={prepareDataSettings.settings}
+            setSettings={(settings) =>
+              setPrepareDataSettings((prev) => ({ ...prev, settings }))
+            }
+          />
+        );
+      case 6:
+      case 7:
+        return (
+          <div className="max-w-4xl ">
+            <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+              Step {currentStep} - Under Development
+            </h1>
+            <p className="text-gray-600">
+              This step is not yet implemented. Please check back later.
+            </p>
+          </div>
+        );
       default:
         return <ChooseType selectedModel={selectedModel} setSelectedModel={setSelectedModel} />;
     }
   };
 
-  
   return (
-    <div className=" bg-gray-50 flex h-[90vh]">
-      {/* Steps Sidebar */}
-      <StepsSidebar steps={getSteps()} currentStep={currentStep} />
+    <>
+      {/* Header */}
+      <div className="bg-blue-900 text-white px-6 py-4">
+        <div className="flex items-center space-x-4">
+          <ArrowLeft className="w-6 h-6 cursor-pointer" />
+          <Home className="w-6 h-6" />
+          <span className="text-lg font-medium">Model Builder</span>
+          <span className="text-gray-300">New Model</span>
+        </div>
+      </div>
 
-      {/* Main Content */}
-      <div className="flex-1">
-        {/* Header */}
-        <div className="bg-blue-900 text-white px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <ArrowLeft className="w-6 h-6 cursor-pointer" />
-            <Home className="w-6 h-6" />
-            <span className="text-lg font-medium">Model Builder</span>
-            <span className="text-gray-300">New Model</span>
-          </div>
+      <div className="bg-gray-50 flex h-[80vh]">
+        {/* Sidebar stays fixed */}
+        <div className="w-64 flex-shrink-0 h-full border-r border-gray-200 bg-white">
+          <StepsSidebar steps={getSteps()} currentStep={currentStep} />
         </div>
 
-        <div className="p-8">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
-              {error}
-            </div>
-          )}
-          {renderStepContent()}
+        {/* Main Content scrolls */}
+        <div className="flex-1 h-full overflow-y-auto">
+          <div className="p-2 pb-20"> {/* Increased bottom padding to ensure buttons are visible */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+                {error}
+              </div>
+            )}
+            {renderStepContent()}
 
-          {/* Navigation */}
-          <div className="flex justify-between mt-8 space-x-4">
-            {currentStep > 1 && (
+            {/* Navigation - Fixed at bottom */}
+            <div className="fixed bottom-0 left-64 right-0 bg-white border-t border-gray-200 p-4 flex justify-between space-x-4 shadow-lg">
+              {currentStep > 1 && (
+                <button
+                  onClick={handleBack}
+                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  Back
+                </button>
+              )}
               <button
-                onClick={handleBack}
+                onClick={handleReset}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
               >
-                Back
+                Reset
               </button>
-            )}
-            <button
-              onClick={handleReset}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Reset
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={
-                (currentStep === 1 && !selectedModel) ||
-                (currentStep === 2 && selectedDataSources.length === 0)
-              }
-              className={`
-                px-6 py-2 rounded-md font-medium transition-colors
-                ${(currentStep === 1 && selectedModel) || 
-                  (currentStep === 2 && selectedDataSources.length > 0) || 
-                  (currentStep >= 3)
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              <button
+                onClick={handleNext}
+                disabled={
+                  (currentStep === 1 && !selectedModel) ||
+                  (currentStep === 2 && selectedDataSources.length === 0) ||
+                  (currentStep === 4 && !goalSettings) ||
+                  (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0)
                 }
-              `}
-            >
-              Next
-            </button>
+                className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  (currentStep === 1 && selectedModel) ||
+                  (currentStep === 2 && selectedDataSources.length > 0) ||
+                  (currentStep === 4 && goalSettings) ||
+                  (currentStep === 5 && prepareDataSettings.selectedVariables.length > 0) ||
+                  currentStep >= 6
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
