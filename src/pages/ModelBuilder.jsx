@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Home } from 'lucide-react';
-import StepsSidebar from '../components/StepSidebar';
+import StepsSidebar from '../components/StepsSidebar';
 import ChooseType from '../components/ChooseType';
 import SelectData from '../components/SelectData';
 import SelectTrainingData from '../components/SelectTrainingData';
@@ -50,10 +50,6 @@ const ModelBuilder = () => {
       setError('Please select at least one data source to continue.');
       return;
     }
-    if (currentStep === 4 && !goalSettings) {
-      setError('Please set a goal to continue.');
-      return;
-    }
     if (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0) {
       setError('Please select at least one variable to continue.');
       return;
@@ -64,7 +60,7 @@ const ModelBuilder = () => {
     }
     setError('');
     if (currentStep < 7) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep(currentStep + 1); // Increment only one step at a time
     }
   };
 
@@ -120,8 +116,8 @@ const ModelBuilder = () => {
           <SetGoal
             onBack={handleBack}
             onNext={(settings) => {
-              setGoalSettings(settings);
-              handleNext();
+              setGoalSettings(settings); // Update state
+              // Do not call handleNext here; let ModelBuilder handle progression
             }}
           />
         );
@@ -180,32 +176,21 @@ const ModelBuilder = () => {
           />
         );
       case 7:
-  return (
-    <ReviewAndTrain
-      selectedModel={selectedModel}
-      selectedDataSources={selectedDataSources}
-      filterConditions={filterConditions}
-      filteredRecords={filteredRecords}
-      totalRecords={totalRecords}
-      goalSettings={goalSettings}
-      prepareDataSettings={prepareDataSettings}
-      selectedAlgorithm={selectedAlgorithm}
-      onTrain={(modelData) => {
-        console.log('Training model with data:', modelData);
-        // Handle the training logic here
-        alert('Model training started successfully!');
-      }}
-    />
-  );
         return (
-          <div className="max-w-4xl">
-            <h1 className="text-2xl font-semibold text-gray-800 mb-4">
-              Step 7 - Under Development
-            </h1>
-            <p className="text-gray-600">
-              This step is not yet implemented. Please check back later.
-            </p>
-          </div>
+          <ReviewAndTrain
+            selectedModel={selectedModel}
+            selectedDataSources={selectedDataSources}
+            filterConditions={filterConditions}
+            filteredRecords={filteredRecords}
+            totalRecords={totalRecords}
+            goalSettings={goalSettings}
+            prepareDataSettings={prepareDataSettings}
+            selectedAlgorithm={selectedAlgorithm}
+            onTrain={(modelData) => {
+              console.log('Training model with data:', modelData);
+              alert('Model training started successfully at 04:19 PM IST on Friday, August 22, 2025!');
+            }}
+          />
         );
       default:
         return <ChooseType selectedModel={selectedModel} setSelectedModel={setSelectedModel} />;
@@ -253,7 +238,7 @@ const ModelBuilder = () => {
               <button
                 onClick={handleReset}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                >
+              >
                 Reset
               </button>
               <button
@@ -261,17 +246,17 @@ const ModelBuilder = () => {
                 disabled={
                   (currentStep === 1 && !selectedModel) ||
                   (currentStep === 2 && selectedDataSources.length === 0) ||
-                  (currentStep === 4 && !goalSettings) ||
                   (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0) ||
-                  (currentStep === 6 && !selectedAlgorithm)
+                  (currentStep === 6 && !selectedAlgorithm) ||
+                  currentStep >= 7
                 }
                 className={`px-6 py-2 rounded-md font-medium transition-colors ${
                   (currentStep === 1 && selectedModel) ||
                   (currentStep === 2 && selectedDataSources.length > 0) ||
-                  (currentStep === 4 && goalSettings) ||
+                  (currentStep === 4) ||
                   (currentStep === 5 && prepareDataSettings.selectedVariables.length > 0) ||
                   (currentStep === 6 && selectedAlgorithm) ||
-                  currentStep >= 7
+                  currentStep < 7
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}

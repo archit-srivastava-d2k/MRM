@@ -201,7 +201,7 @@ const SetGoal = ({ onBack, onNext }) => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-12 pt-8 border-t border-gray-200">
+      {/* <div className="flex justify-between mt-12 pt-8 border-t border-gray-200">
         <button
           onClick={onBack}
           className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
@@ -215,7 +215,7 @@ const SetGoal = ({ onBack, onNext }) => {
         >
           Next
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
