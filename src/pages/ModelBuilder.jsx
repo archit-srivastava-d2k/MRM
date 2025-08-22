@@ -6,6 +6,8 @@ import SelectData from '../components/SelectData';
 import SelectTrainingData from '../components/SelectTrainingData';
 import SetGoal from '../components/SetGoal';
 import PrepareData from '../components/PrepareData';
+import SelectAlgorithm from '../components/SelectAlgorithm';
+import ReviewAndTrain from '../components/ReviewAndTrain';
 
 const ModelBuilder = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -27,6 +29,7 @@ const ModelBuilder = () => {
     alerts: {},
     settings: {}
   });
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState('glm'); // Default to GLM
 
   const getSteps = () => [
     { id: 1, title: 'Choose Type', completed: currentStep > 1, active: currentStep === 1 },
@@ -53,6 +56,10 @@ const ModelBuilder = () => {
     }
     if (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0) {
       setError('Please select at least one variable to continue.');
+      return;
+    }
+    if (currentStep === 6 && !selectedAlgorithm) {
+      setError('Please select an algorithm or enable automatic selection to continue.');
       return;
     }
     setError('');
@@ -82,6 +89,7 @@ const ModelBuilder = () => {
       alerts: {},
       settings: {}
     });
+    setSelectedAlgorithm('glm');
     setCurrentStep(1);
     setError('');
   };
@@ -160,11 +168,39 @@ const ModelBuilder = () => {
           />
         );
       case 6:
-      case 7:
         return (
-          <div className="max-w-4xl ">
+          <SelectAlgorithm
+            onBack={handleBack}
+            onNext={(algorithm) => {
+              setSelectedAlgorithm(algorithm);
+              handleNext();
+            }}
+            selectedAlgorithm={selectedAlgorithm}
+            onAlgorithmSelect={setSelectedAlgorithm}
+          />
+        );
+      case 7:
+  return (
+    <ReviewAndTrain
+      selectedModel={selectedModel}
+      selectedDataSources={selectedDataSources}
+      filterConditions={filterConditions}
+      filteredRecords={filteredRecords}
+      totalRecords={totalRecords}
+      goalSettings={goalSettings}
+      prepareDataSettings={prepareDataSettings}
+      selectedAlgorithm={selectedAlgorithm}
+      onTrain={(modelData) => {
+        console.log('Training model with data:', modelData);
+        // Handle the training logic here
+        alert('Model training started successfully!');
+      }}
+    />
+  );
+        return (
+          <div className="max-w-4xl">
             <h1 className="text-2xl font-semibold text-gray-800 mb-4">
-              Step {currentStep} - Under Development
+              Step 7 - Under Development
             </h1>
             <p className="text-gray-600">
               This step is not yet implemented. Please check back later.
@@ -183,7 +219,7 @@ const ModelBuilder = () => {
         <div className="flex items-center space-x-4">
           <ArrowLeft className="w-6 h-6 cursor-pointer" />
           <Home className="w-6 h-6" />
-          <span className="text-lg font-medium">Model Builder</span>
+          <span className="text-lg font-medium">ModelBuilder</span>
           <span className="text-gray-300">New Model</span>
         </div>
       </div>
@@ -196,7 +232,7 @@ const ModelBuilder = () => {
 
         {/* Main Content scrolls */}
         <div className="flex-1 h-full overflow-y-auto">
-          <div className="p-2 pb-20"> {/* Increased bottom padding to ensure buttons are visible */}
+          <div className="p-2 pb-20">
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
                 {error}
@@ -217,7 +253,7 @@ const ModelBuilder = () => {
               <button
                 onClick={handleReset}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-              >
+                >
                 Reset
               </button>
               <button
@@ -226,14 +262,16 @@ const ModelBuilder = () => {
                   (currentStep === 1 && !selectedModel) ||
                   (currentStep === 2 && selectedDataSources.length === 0) ||
                   (currentStep === 4 && !goalSettings) ||
-                  (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0)
+                  (currentStep === 5 && prepareDataSettings.selectedVariables.length === 0) ||
+                  (currentStep === 6 && !selectedAlgorithm)
                 }
                 className={`px-6 py-2 rounded-md font-medium transition-colors ${
                   (currentStep === 1 && selectedModel) ||
                   (currentStep === 2 && selectedDataSources.length > 0) ||
                   (currentStep === 4 && goalSettings) ||
                   (currentStep === 5 && prepareDataSettings.selectedVariables.length > 0) ||
-                  currentStep >= 6
+                  (currentStep === 6 && selectedAlgorithm) ||
+                  currentStep >= 7
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}

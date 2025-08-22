@@ -49,7 +49,7 @@ const SetGoal = ({ onBack, onNext }) => {
       return;
     }
     setError('');
-    onNext(goalSettings); // Pass settings to parent for persistence
+    onNext(goalSettings); // Pass settings to parent
   };
 
   return (
@@ -200,7 +200,7 @@ const SetGoal = ({ onBack, onNext }) => {
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
-      {/* Navigation Buttons
+      {/* Navigation Buttons */}
       <div className="flex justify-between mt-12 pt-8 border-t border-gray-200">
         <button
           onClick={onBack}
@@ -215,7 +215,7 @@ const SetGoal = ({ onBack, onNext }) => {
         >
           Next
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };
