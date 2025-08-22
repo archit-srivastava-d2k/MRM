@@ -104,6 +104,8 @@ const ModelBuilder = () => {
       case 3:
         return (
           <SelectTrainingData
+            onBack={handleBack}
+            onNext={handleNext}
             filterConditions={filterConditions}
             setFilterConditions={setFilterConditions}
             totalRecords={totalRecords}
